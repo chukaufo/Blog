@@ -1,1 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>How I Built a Finance Tracker on iOS with Zero Backend | Chuka</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
+  <style>
+    body {
+      transition: background-color 0.3s ease, color 0.3s ease;
+      background: #ffffff;
+      color: #1f2937;
+    }
+
+    body.dark-mode {
+      background: #000000;
+      color: #ffffff;
+    }
+
+    body.dark-mode .article-container {
+      background: #000000;
+    }
+
+    body.dark-mode .article-content {
+      color: #ffffff;
+    }
+
+    body.dark-mode .article-content h2,
+    body.dark-mode .article-content h3,
+    body.dark-mode .article-header h1 {
+      color: #ffffff;
+    }
+
+    body.dark-mode .article-content strong {
+      color: #ffffff;
+    }
+
+    body.dark-mode .article-byline {
+      color: #d1d5db;
+    }
+
+    body.dark-mode .article-content li {
+      color: #ffffff;
+    }
+
+    body.dark-mode .back-button {
+      color: #8b5cf6;
+    }
+
+    body.dark-mode .back-button:hover {
+      color: #c4b5fd;
+    }
+
+    body.dark-mode .article-links {
+      border-top: 1px solid #333333;
+    }
+
+    body.dark-mode .article-links a {
+      color: #8b5cf6;
+    }
+
+    body.dark-mode .article-links a:hover {
+      color: #c4b5fd;
+    }
+
+    body.dark-mode footer {
+      border-top: 1px solid #333333;
+    }
+
+    body.dark-mode footer p {
+      color: #d1d5db;
+    }
+
+    .theme-toggle {
+      position: fixed;
+      top: 2rem;
+      right: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      background: #f3f4f6;
+      border: 1px solid #e5e7eb;
+      border-radius: 50px;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      font-weight: 600;
+      color: #1f2937;
+      transition: 0.2s ease;
+      z-index: 100;
+    }
+
+    .theme-toggle:hover {
+      background: #e5e7eb;
+      border-color: #d1d5db;
+    }
+
+    body.dark-mode .theme-toggle {
+      background: #1f2937;
+      border: 1px solid #333333;
+      color: #ffffff;
+    }
+
+    body.dark-mode .theme-toggle:hover {
+      background: #374151;
+      border-color: #4b5563;
+    }
+
+    .theme-toggle i {
+      font-size: 1.1rem;
+    }
+
+    @media (max-width: 640px) {
+      .theme-toggle {
+        top: 1rem;
+        right: 1rem;
+        padding: 0.4rem 0.8rem;
+        font-size: 0.9rem;
+      }
+
+      .theme-toggle span {
+        display: none;
+      }
+    }
+
+    .article-container {
+      max-width: 750px;
+      margin: 0 auto;
+      padding: 4rem 1.5rem;
+    }
+
+    .article-header {
+      margin-bottom: 3rem;
+    }
+
+    .article-header h1 {
+      font-size: 2.2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .article-byline {
+      color: #4b5563;
+      font-size: 0.95rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .article-subtitle {
+      color: #6b7280;
+      font-size: 1rem;
+      font-style: italic;
+      margin-top: 0.5rem;
+    }
+
+    body.dark-mode .article-subtitle {
+      color: #9ca3af;
+    }
+
+    .article-content {
+      font-size: 1rem;
+      line-height: 1.8;
+      color: #1f2937;
+    }
+
+    .article-content h2 {
+      font-size: 1.5rem;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      color: #1f2937;
+    }
+
+    .article-content h3 {
+      font-size: 1.2rem;
+      margin-top: 1.5rem;
+      margin-bottom: 0.75rem;
+      color: #1f2937;
+    }
+
+    .article-content p {
+      margin-bottom: 1.25rem;
+    }
+
+    .article-content ul,
+    .article-content ol {
+      margin-left: 1.5rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .article-content li {
+      margin-bottom: 0.5rem;
+      color: #1f2937;
+    }
+
+    .article-content strong {
+      color: #1f2937;
+    }
+
+    .back-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #7c3aed;
+      text-decoration: none;
+      font-weight: 600;
+      margin-bottom: 2rem;
+      transition: 0.2s ease;
+    }
+
+    .back-button:hover {
+      color: #6d28d9;
+    }
+
+    .architecture-diagram {
+      margin: 2rem 0;
+      padding: 2rem;
+      background: #f9fafb;
+      border-radius: 12px;
+      overflow-x: auto;
+    }
+
+    body.dark-mode .architecture-diagram {
+      background: #111827;
+    }
+
+    .article-links {
+      margin-top: 3rem;
+      padding-top: 2rem;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    .article-links p {
+      margin-bottom: 1rem;
+    }
+
+    .link-card-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .link-card {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem 1.25rem;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      text-decoration: none;
+      color: #1f2937;
+      transition: 0.2s ease;
+      background: #f9fafb;
+    }
+
+    .link-card:hover {
+      border-color: #7c3aed;
+      background: #faf5ff;
+    }
+
+    .link-card-icon {
+      font-size: 1.5rem;
+      color: #7c3aed;
+      flex-shrink: 0;
+    }
+
+    .link-card-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .link-card-label {
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+
+    .link-card-url {
+      font-size: 0.8rem;
+      color: #6b7280;
+      margin-top: 0.1rem;
+    }
+
+    body.dark-mode .link-card {
+      background: #111827;
+      border-color: #333333;
+      color: #ffffff;
+    }
+
+    body.dark-mode .link-card:hover {
+      border-color: #8b5cf6;
+      background: #1a1033;
+    }
+
+    body.dark-mode .link-card-icon {
+      color: #8b5cf6;
+    }
+
+    body.dark-mode .link-card-url {
+      color: #9ca3af;
+    }
+
+    footer {
+      border-top: 1px solid #e5e7eb;
+      padding: 1.5rem;
+      text-align: center;
+    }
+
+    footer p {
+      color: #6b7280;
+      font-size: 0.95rem;
+      opacity: 0.9;
+    }
+  </style>
+</head>
+<body>
+  <button class="theme-toggle" id="themeToggle">
+    <i class="bi bi-moon-fill"></i>
+    <span>Dark</span>
+  </button>
+
+  <main class="article-container">
+    <a href="/" class="back-button"><i class="bi bi-arrow-left"></i>Back to Blog</a>
+
+    <article class="article-header">
+      <h1>How I Built a Finance Tracker on iOS with Zero Backend</h1>
+      <p class="article-byline">By Chuka Uwefoh • June 16, 2026</p>
+      <p class="article-subtitle">A local-first approach to privacy using Apple Vision, Core Data, and CloudKit</p>
+    </article>
+
+    <div class="article-content">
+      <p>
+        This is my first App Store launch. <strong>Fint</strong> is a spending tracker and budget manager that lets you scan receipts, add recurring bills, and get detailed visual insights into your spending habits. All without a single server.
+      </p>
+
+      <p>
+        You might be wondering how that's possible. The short answer: Apple's ecosystem makes it unnecessary. On-device OCR (Optical Character Recognition), local data storage, CloudKit sync, and push notifications are all first-party tools that handle what most apps outsource to a backend. I just had to put them together.
+      </p>
+
+      <p>
+        Fint started as a receipt scanner. I had been reading about Apple Vision, Apple's framework for computer vision tasks including OCR, which lets your device read text from images. I built a quick receipt scanner with it and left it sitting on GitHub for a few months.
+      </p>
+
+      <p>
+        Then I discovered Core Data. Core Data is Apple's framework for persisting data locally on a user's device. No server, no database you manage, just structured data that lives on the phone and belongs entirely to the person holding it.
+      </p>
+
+      <p>
+        That combination got me thinking. Most finance apps ask you to create an account, and you never really know what happens to your data after that. Financial information is about as personal as it gets, and I already had the building blocks for something that never needed to leave your device. So I decided to turn the project into a real app, with privacy as the foundation, not an afterthought.
+      </p>
+
+      <p>
+        No account required. Your data lives on your device. I also added optional iCloud sync so your spending history stays accessible across all your Apple devices on the same Apple ID, without any of it touching my servers.
+      </p>
+
+      <h2>Architecture</h2>
+
+      <p>
+        Leveraging these tools from Apple, I was able to architect Fint without a backend or servers. The app is organized into three layers, each with a clear responsibility.
+      </p>
+
+      <ul>
+        <li>
+          <strong>UI Layer:</strong> Built with SwiftUI, this is the outermost layer and the only thing users directly interact with. It displays information and receives input, but handles no logic of its own. The app has three tabs: Ledger, where users track spending and manage budgets; Insights, which surfaces visual spending trends using Swift Charts, Apple's native charting framework; and Settings, where users configure their preferences.
+        </li>
+        <li>
+          <strong>Business Logic Layer:</strong> This is where the app's core features live. A dedicated BudgetManager handles budget tracking and validation, while a StreakManager powers the streaks feature. Streaks reward you for staying within your budget consistently across weeks and months. This layer also handles all on-device OCR. I added filtering logic to improve accuracy since receipts contain a lot of noise. The scanner first identifies whether the document is a receipt, invoice, or bank transaction screenshot, then extracts the relevant data accordingly. It is not perfect, but it handles the common cases well and always lets users edit anything it gets wrong.
+        </li>
+        <li>
+          <strong>Data Layer:</strong> This layer is responsible for persistence. Core Data stores all user data locally on the device, structured into entities for receipts, budgets, streaks, and recurring items. I also integrated CloudKit here as the optional sync layer. When a user enables iCloud sync, their data mirrors across all their Apple devices on the same Apple ID, without passing through any server I own or operate.
+        </li>
+      </ul>
+
+      <div class="architecture-diagram">
+        <img src="images/fint-architecture.png" alt="Architecture of Fint" style="width: 100%; max-width: 800px; display: block; margin: 0 auto;">
+      </div>
+
+      <h2>Challenges</h2>
+
+      <ul>
+        <li>
+          <strong>Limited features:</strong> One feature I wanted to include was automated transaction tracking through an external API. It is technically possible, but it would be complex to build and difficult to maintain without a backend. Since my goal was to leverage Apple's ecosystem as much as possible, I left it out of V1. The plan for a future version is to use Siri and Apple Intelligence so users can log spending without even opening the app.
+        </li>
+        <li>
+          <strong>iCloud sync:</strong> This took three days to figure out. Sync was working perfectly in development but completely silent in production. I eventually found a developer on the Apple forums with the same issue. The fix was simple but easy to miss: CloudKit.framework was not manually linked in the project. Xcode includes it implicitly in debug builds but drops it in production. Adding it manually under Build Phases in Xcode resolved it.
+        </li>
+        <li>
+          <strong>Notification deep linking:</strong> Notifications were trickier than expected. Tapping a notification would always land users on the default tab instead of the relevant page. The fix was adding a dedicated file to the business logic layer called <code>AppNavigationState</code>, a shared singleton that holds the app's navigation state. When a notification fires, it updates that state and the UI responds by routing the user to the correct page automatically.
+        </li>
+      </ul>
+
+      <h2>Tradeoffs and What's Next</h2>
+
+      <p>
+        The honest tradeoff is that some features that would meaningfully improve the user experience will eventually require a backend. That is just the reality of building local-first. But it does not mean the experience has to suffer. Apple's ecosystem is deep, and I plan to keep reading through their frameworks. If something is a good fit for Fint, I will incorporate it.
+      </p>
+
+      <p>
+        The next steps are Apple Intelligence and Siri integration so users can log spending without opening the app, and potentially an Apple Watch app for quick spending glances throughout the day.
+      </p>
+
+      <p>
+        Finance apps carry real responsibility. Any mistake involving someone's money or data about it can have serious consequences. Fint's zero-backend architecture sidesteps a whole category of those risks. There is no server to breach, no database to leak. The app only ever works with data the user puts in themselves, and that data never leaves their device unless they choose to enable iCloud sync.
+      </p>
+
+      <div class="article-links">
+        <p>Check out Fint:</p>
+        <div class="link-card-group">
+          <a href="https://apps.apple.com/us/app/fint/id6775697441" target="_blank" class="link-card">
+            <i class="bi bi-apple link-card-icon"></i>
+            <div class="link-card-text">
+              <span class="link-card-label">Download Fint on the App Store</span>
+              <span class="link-card-url">apps.apple.com/us/app/fint/id6775697441</span>
+            </div>
+          </a>
+          <a href="https://github.com/chukaufo/fint" target="_blank" class="link-card">
+            <i class="bi bi-github link-card-icon"></i>
+            <div class="link-card-text">
+              <span class="link-card-label">View the Source Code on GitHub</span>
+              <span class="link-card-url">github.com/chukaufo/fint</span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Chuka. All rights reserved.</p>
+  </footer>
+
+  <script>
+    const themeToggle = document.getElementById('themeToggle');
+    const body = document.body;
+
+    const currentTheme = localStorage.getItem('theme') || 'light';
+    if (currentTheme === 'dark') {
+      body.classList.add('dark-mode');
+      updateToggleButton();
+    }
+
+    themeToggle.addEventListener('click', () => {
+      if (body.classList.contains('dark-mode')) {
+        body.classList.remove('dark-mode');
+        localStorage.setItem('theme', 'light');
+      } else {
+        body.classList.add('dark-mode');
+        localStorage.setItem('theme', 'dark');
+      }
+      updateToggleButton();
+    });
+
+    function updateToggleButton() {
+      if (body.classList.contains('dark-mode')) {
+        themeToggle.innerHTML = '<i class="bi bi-sun-fill"></i><span>Light</span>';
+      } else {
+        themeToggle.innerHTML = '<i class="bi bi-moon-fill"></i><span>Dark</span>';
+      }
+    }
+  </script>
+</body>
+</html>
