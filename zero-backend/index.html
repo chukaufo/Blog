@@ -360,7 +360,7 @@
 
       <ul>
         <li>
-          <strong>UI Layer:</strong> Built with SwiftUI, this is the outermost layer and the only thing users directly interact with. It displays information and receives input, but handles no logic of its own. The app has three tabs: Ledger, where users track spending and manage budgets; Insights, which surfaces visual spending trends using Swift Charts, Apple's native charting framework; and Settings, where users configure their preferences.
+          <strong>UI Layer:</strong> Built with SwiftUI, this is the outermost layer and the only thing users directly interact with. It displays information and receives input, but handles no logic of its own. The app has three tabs: Ledger, where users track spending and manage budgets; Insights, which displays visual spending trends using Swift Charts, Apple's native charting framework; and Settings, where users configure their preferences.
         </li>
         <li>
           <strong>Business Logic Layer:</strong> This is where the app's core features live. A dedicated BudgetManager handles budget tracking and validation, while a StreakManager powers the streaks feature. Streaks reward you for staying within your budget consistently across weeks and months. This layer also handles all on-device OCR. I added filtering logic to improve accuracy since receipts contain a lot of noise. The scanner first identifies whether the document is a receipt, invoice, or bank transaction screenshot, then extracts the relevant data accordingly. It is not perfect, but it handles the common cases well and always lets users edit anything it gets wrong.
